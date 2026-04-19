@@ -1,59 +1,44 @@
-# Contributor Management and Issue Tracking System (CMITS)
+# CMITS — Contributor Management and Issue Tracking System
 
-A Python-based command-line application for managing project contributors and tracking issues — built as a course project for Introduction to Open Source Software.
+![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Code Quality](https://img.shields.io/badge/Code%20Quality-flake8-yellow)
+![Status](https://img.shields.io/badge/Status-Active-brightgreen)
+![Week](https://img.shields.io/badge/OSS-Week%206-blueviolet)
+
+A Python command-line application for managing project contributors and tracking issues — built as a course project for Introduction to Open Source Software.
+
+---
+
+## Table of Contents
+
+- [About](#about)
+- [Features](#features)
+- [Project Structure](#project-structure)
+- [Requirements](#requirements)
+- [How to Use](#how-to-use)
+- [Output Files](#output-files)
+- [GitHub Actions](#github-actions)
+- [Contributing](#contributing)
+- [License](#license)
 
 ---
 
 ## About
 
-CMITS is a simple, interactive system that lets you register contributors, log issues, and generate project reports — all from the terminal. It demonstrates core Python concepts including data structures, file I/O, and input validation.
+CMITS is a simple, interactive system that lets you register contributors, log issues, and generate project reports — all from the terminal. It demonstrates core Python concepts including tuples, lists, sets, dictionaries, file I/O, and input validation.
 
 ---
 
-## What It Does
+## Features
 
-- Register up to **4 contributors** with their name, role, language, commits, and country
-- Log up to **5 issues** with type, priority, reporter, and status
-- Automatically generates a **project report** (`.txt`) and an **issues export** (`.csv`)
-- Displays a **final summary** and highlights urgent (Critical/High) issues
-
----
-
-## Requirements
-
-- Python 3.x
-- No external libraries required — uses only Python built-ins (`os`, `csv`)
-
----
-
-## How to Use
-
-**1. Clone the repository**
-```bash
-git clone https://github.com/your-username/OSS-week-6.git
-cd OSS-week-6
-```
-
-**2. Run the program**
-```bash
-python main.py
-```
-
-**3. Follow the prompts**
-
-The program will guide you step by step:
-- Enter contributor details (4 contributors)
-- Enter issue details (5 issues)
-- Output files will be saved automatically in a `cmits/` folder
-
----
-
-## Output Files
-
-| File | Description |
-|------|-------------|
-| `cmits/project_report.txt` | Full project summary including contributors, issues, and analysis |
-| `cmits/issues.csv` | Exportable spreadsheet of all logged issues |
+-  Register up to **4 contributors** with name, role, language, commits, and country
+-  Log up to **5 issues** with type, priority, reporter, and status
+-  Robust **input validation** — rejects invalid entries and re-prompts cleanly
+-  Automatic **project report** generation (`.txt`)
+-  Automatic **issues export** (`.csv`)
+-  **Urgent issue detection** using list comprehension
+-  **Final summary** printed to the terminal
 
 ---
 
@@ -61,16 +46,108 @@ The program will guide you step by step:
 
 ```
 OSS-week-6/
-├── main.py           # Main application file
-├── README.md         # You are here
-├── CONTRIBUTING.md   # How to contribute
-├── CODE_OF_CONDUCT.md
-└── LICENSE
+├── .github/
+│   └── workflows/
+│       └── lint.yml        # GitHub Actions — automated code quality check
+├── src/
+│   └── main.py             # Main application
+├── tests/                  # Placeholder for future unit tests
+├── CHANGELOG.md            # Version history
+├── CODE_OF_CONDUCT.md      # Community standards
+├── CONTRIBUTING.md         # How to contribute
+├── DOCUMENTATION.md        # Plain-language code explanation
+├── LICENSE                 # MIT License
+└── README.md               # You are here
 ```
 
 ---
 
-## Author
+## Requirements
 
-**Marie Criz Zaragoza** — Student ID: 26040022  
-Introduction to Open Source Software
+- Python 3.x
+- No external libraries — uses only built-ins (`os`, `csv`)
+
+---
+
+## How to Use
+
+**1. Clone the repository**
+```bash
+git clone https://github.com/marrietty/OSS-week-6.git
+cd OSS-week-6
+```
+
+**2. Run the program**
+```bash
+python src/main.py
+```
+
+**3. Follow the prompts**
+
+The program guides you through two stages:
+
+**Stage 1 — Contributors** (4 entries)
+```
+Enter contributor name: Jane Doe
+Enter your role: Developer
+Enter primary language: Python
+Enter number of commits: 42
+Enter country: Philippines
+```
+
+**Stage 2 — Issues** (5 entries)
+```
+Enter Issue ID: ISS-001
+Enter Issue title: Login page crashes on mobile
+Enter issue type (Bug/Feature): Bug
+Enter issue priority (Critical/High/Medium/Low): High
+Enter issue reporter: Jane Doe
+Enter issue status (Open/In Progress/Resolved): Open
+```
+
+Output files are saved automatically inside a `cmits/` folder.
+
+---
+
+## Output Files
+
+| File | Description |
+|------|-------------|
+| `cmits/project_report.txt` | Full project summary — contributors, issues, analysis, and urgent flags |
+| `cmits/issues.csv` | Spreadsheet-ready export of all logged issues |
+
+---
+
+## GitHub Actions
+
+This repository uses **GitHub Actions** to automatically check code quality on every push and pull request.
+
+The workflow runs `flake8` — a Python linting tool — to ensure the code follows clean, consistent style standards. You can see the results under the **Actions** tab.
+
+```yaml
+on: [push, pull_request]
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+      - run: pip install flake8
+      - run: flake8 src/main.py
+```
+
+---
+
+## Contributing
+
+Contributions are welcome! Please read [CONTRIBUTING.md](./CONTRIBUTING.md) before submitting a pull request, and follow the [Code of Conduct](./CODE_OF_CONDUCT.md).
+
+---
+
+## License
+
+This project is licensed under the [MIT License](./LICENSE).
+
+---
+
+**Marie Criz Zaragoza** · Student ID: 26040022 · Introduction to Open Source Software
