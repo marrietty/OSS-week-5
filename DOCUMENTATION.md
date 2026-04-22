@@ -9,15 +9,8 @@ A plain-language guide to understanding how this program works.
 
 Imagine you're managing a small software team. You need to keep track of **who is working on the project** and **what problems need to be solved**. CMITS is a simple tool that helps you do exactly that — through a series of questions it asks you in the terminal.
 
-At the end, it saves everything into organized files you can read or share.
-
 ---
 
-## How the Program Is Organized
-
-The program is divided into three main parts, plus a bonus section.
-
----
 
 ### Part 1 — Launch Your Project
 
