@@ -69,8 +69,7 @@ If you enter something that doesn't match, the program will simply ask again.
 ---
 
 ## Output Summary
-**By the end of the program, you will have a printed **final summary** on screen
-**---
+By the end of the program, you will have a printed **final summary** on screen
 
 ## In Simple Terms
 
