@@ -99,35 +99,8 @@ Enter issue reporter: Jane Doe
 Enter issue status (Open/In Progress/Resolved): Open
 ```
 
-
-## Output Files
-
-| File | Description |
-|------|-------------|
-| `cmits/project_report.txt` | Full project summary — contributors, issues, analysis, and urgent flags |
-| `cmits/issues.csv` | Spreadsheet-ready export of all logged issues |
-
 ---
 
-## GitHub Actions
-
-This repository uses **GitHub Actions** to automatically check code quality on every push and pull request.
-
-The workflow runs `flake8` — a Python linting tool — to ensure the code follows clean, consistent style standards. You can see the results under the **Actions** tab.
-
-```yaml
-on: [push, pull_request]
-jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-      - run: pip install flake8
-      - run: flake8 src/main.py
-```
-
----
 
 ## Contributing
 
