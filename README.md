@@ -33,9 +33,8 @@ CMITS is a simple, interactive system that lets you register contributors, log i
 -  Register up to **4 contributors** with name, role, language, commits, and country
 -  Log up to **5 issues** with type, priority, reporter, and status
 -  Robust **input validation** — rejects invalid entries and re-prompts cleanly
--  Automatic **project report** generation (`.txt`)
--  Automatic **issues export** (`.csv`)
--  **Urgent issue detection** using list comprehension
+-  Automatic **project report** generation
+-  **Urgent issue detection** using list
 -  **Final summary** printed to the terminal
 
 ---
