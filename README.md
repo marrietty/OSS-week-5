@@ -46,13 +46,7 @@ CMITS is a simple, interactive system that lets you register contributors, log i
 
 ```
 OSS-week-6/
-├── .github/
-│   └── workflows/
-│       └── lint.yml        # GitHub Actions — automated code quality check
-├── src/
-│   └── main.py             # Main application
-├── tests/                  # Placeholder for future unit tests
-├── CHANGELOG.md            # Version history
+├── main.py
 ├── CODE_OF_CONDUCT.md      # Community standards
 ├── CONTRIBUTING.md         # How to contribute
 ├── DOCUMENTATION.md        # Plain-language code explanation
@@ -105,9 +99,6 @@ Enter issue reporter: Jane Doe
 Enter issue status (Open/In Progress/Resolved): Open
 ```
 
-Output files are saved automatically inside a `cmits/` folder.
-
----
 
 ## Output Files
 
