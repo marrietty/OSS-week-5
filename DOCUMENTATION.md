@@ -64,7 +64,7 @@ The program is strict about what it accepts to keep the data clean:
 | Priority | Must be "Critical", "High", "Medium", or "Low" |
 | Status | Must be "Open", "In Progress", or "Resolved" |
 
-If you enter something that doesn't match, the program will simply ask again — it won't crash.
+If you enter something that doesn't match, the program will simply ask again.
 
 ---
 
