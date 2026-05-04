@@ -1,204 +1,277 @@
-# Documentation — CMITS
+# CMITS Documentation
 
 **Contributor Management and Issue Tracking System**
-A plain-language guide to every function and section in `main.py`, including the full code for each.
 
 ---
 
-## Overview
+## Variables Used Throughout the Program
 
-CMITS is a Python program that runs in the terminal. It asks you questions, collects your answers, organizes the data, and saves everything into files. There are no buttons or screens — just typed responses.
+Before anything runs, two simple variables are created at the very top. These are used everywhere in the program just to make the printed output look clean and organized.
 
-The program is built from **3 helper functions**, **2 data-collection functions**, and **4 sections** of logic that process and save everything.
-
----
-
-## Shared Variables
-
-Before any functions are defined, two reusable separator lines are created. These are just visual dividers used throughout the program when printing to the terminal — a long line of `=` signs and a long line of `-` signs.
-
-```python
-line = 70 * "="
-dash = 70 * "-"
-```
+| Variable | Value | What it's for |
+|----------|-------|---------------|
+| `line` | `70 * "="` | A long line of equal signs. Used as a header separator when printing to the terminal. |
+| `dash` | `70 * "-"` | A long line of dashes. Used as a section divider between printed blocks. |
 
 ---
 
-## Helper Functions
+## Part 1 — Helper Functions
 
-These are small, reusable tools built to solve one specific problem: making sure bad data never gets into the system. They are called repeatedly throughout the program whenever user input is needed.
+I made three small functions whose only job is to check if the user's input is acceptable. Instead of writing the same checking logic over and over, I put it in these functions and just call them whenever I need them.
 
 ---
 
 ### `get_validated_input(prompt, valid_options)`
 
-**What it does:**
-Asks the user a question and only accepts one of the pre-approved answers. It strips extra spaces from what the user typed, normalizes the capitalization (so "bug" and "BUG" are both treated as "Bug"), then checks if the answer is in the allowed list. If it isn't, it shows an error and loops back to ask again — it never moves forward with a wrong answer.
+This function is for fields that only accept specific words — like "Bug" or "Feature", or "Open", "In Progress", "Resolved". It takes the question to ask (`prompt`) and a list of accepted answers (`valid_options`).
 
-**Why it was created:**
-Some fields only make sense with specific values. For example, an issue's priority can only be "Critical", "High", "Medium", or "Low" — anything else would break the system's analysis. This function enforces that rule in one place so it doesn't have to be rewritten every time.
+It keeps asking the same question until the user gives one of the accepted answers. It also fixes capitalization automatically, so typing "bug" or "BUG" both count as "Bug".
 
-**Used for:** Issue type (Bug/Feature), priority level (Critical/High/Medium/Low), and issue status (Open/In Progress/Resolved).
+**Variables inside this function:**
+
+| Variable | What it holds |
+|----------|--------------|
+| `prompt` | The question shown to the user (passed in when the function is called) |
+| `valid_options` | The list of accepted answers (e.g., `["Bug", "Feature"]`) |
+| `raw` | What the user actually typed, with extra spaces removed |
+| `formatted` | The same input but with proper capitalization applied |
+
+**Used when collecting:** issue type, issue priority, issue status.
 
 ---
 
 ### `get_validated_alpha(prompt, field_name)`
 
-**What it does:**
-Asks the user for a text answer — like a name, role, or country — and rejects anything that contains numbers or special characters. It also rejects blank answers. Spaces are allowed (so "New Zealand" or "Team Lead" work fine). If the input passes, it's returned with proper capitalization (e.g., "jane doe" becomes "Jane Doe").
+This function is for text fields like names, roles, or countries. It checks that the input is not empty and contains only letters and spaces — no numbers, no symbols.
 
-**Why it was created:**
-Names and roles should only contain letters. Allowing numbers or symbols in a contributor's name field (e.g., "Dev123" or "!Admin") would produce messy, unprofessional reports. This function keeps all text fields clean automatically.
+If the input passes, it returns the value with proper capitalization (so "marie" becomes "Marie", "new zealand" becomes "New Zealand"). If it fails, it shows a message and asks again.
 
-**Used for:** Contributor name, role, language, country, and issue title and reporter.
+**Variables inside this function:**
+
+| Variable | What it holds |
+|----------|--------------|
+| `prompt` | The question shown to the user |
+| `field_name` | The name of the field, used in the error message (e.g., "Name", "Role") |
+| `value` | What the user typed, cleaned up with `.strip()` |
+
+**Used when collecting:** contributor name, role, language, country — and issue title and reporter name.
 
 ---
 
 ### `get_validated_int(prompt)`
 
-**What it does:**
-Asks the user to enter a number and keeps asking until they provide a valid whole number that is zero or greater. It uses Python's built-in `.isdigit()` check, which naturally rejects decimals, negative numbers, and any text. Once a valid number is entered, it converts it from text to an actual integer and returns it.
+This function is just for the commits field. It keeps asking until the user types a whole number that is zero or greater. It uses `.isdigit()` to check, which automatically rejects anything like "-5", "3.5", or "many".
 
-**Why it was created:**
-The number of commits a contributor has made must be a real, countable number — not "many" or "-5" or "3.5". This function ensures the commits field always contains a usable integer that the program can work with.
+**Variables inside this function:**
 
-**Used for:** Number of commits per contributor.
+| Variable | What it holds |
+|----------|--------------|
+| `prompt` | The question shown to the user |
+| `raw` | What the user typed, cleaned up with `.strip()` |
+
+**Used when collecting:** number of commits per contributor.
 
 ---
 
-## Section 1 — Launch Your Project
+## Part 2 — Collecting Contributors
 
-### Project Data (Tuple)
+### Project Tuple
 
-The project's fixed details are stored in a tuple — an ordered, unchangeable list. Tuples are used here because this information (name, version, year, language, lead) should never be modified once set. The `contributors` list starts empty and gets filled as users are registered.
+Before asking for contributors, the program stores the project's fixed details in a tuple called `project`.
+
+```
+project = ("CMITS", 1, 2026, "Python", "Marie Criz Zaragoza")
+```
+
+A tuple was chosen here because this information should never change while the program is running. Tuples in Python do not allow changes after they are created, which makes them a safe choice for fixed data like this.
+
+| Index | Value | Meaning |
+|-------|-------|---------|
+| `project[0]` | `"CMITS"` | Project name |
+| `project[1]` | `1` | Version number |
+| `project[2]` | `2026` | Year started |
+| `project[3]` | `"Python"` | Main language |
+| `project[4]` | `"Marie Criz Zaragoza"` | Project lead |
+
+There is also a `contributors` variable — it starts as an empty list and gets filled as each contributor is registered.
 
 ---
 
 ### `get_contributor()`
 
-**What it does:**
-Collects all the information needed for one contributor by asking five questions in order: name, role, programming language, number of commits, and country. Each answer is validated using the helper functions. Once all five answers pass validation, they are packaged together into a dictionary (a labeled collection of data) and returned. The `while` loop calls this function repeatedly until exactly 4 contributors are registered.
+This function collects all the details for one contributor. It asks five questions and uses the helper functions to make sure each answer is valid before accepting it. Once all five answers are collected, it returns them together as a dictionary.
 
-**Why it was created:**
-Instead of writing the same five questions out four separate times, this function groups them into one reusable block. It also handles the case where the user interrupts the program midway (pressing Ctrl+C), so it exits cleanly instead of crashing.
+The program calls this function inside a `while` loop that keeps going until exactly 4 contributors have been added. If the user presses Ctrl+C to stop early, the loop exits without crashing.
 
-**Fields collected:**
+**Variables inside this function:**
 
-| Field | What it means |
-|-------|--------------|
-| `name` | The contributor's full name |
-| `role` | Their job on the project (e.g., Developer, Designer) |
-| `language` | The programming language they use |
-| `commits` | How many times they've submitted code |
-| `country` | Where they are from |
+| Variable | What it holds | Where it comes from |
+|----------|--------------|---------------------|
+| `name` | Contributor's full name | `get_validated_alpha()` |
+| `role` | Their role on the project | `get_validated_alpha()` |
+| `language` | Programming language they use | `get_validated_alpha()` |
+| `commits` | Number of code submissions | `get_validated_int()` |
+| `country` | Their country | `get_validated_alpha()` |
+
+**Variables in the loop that calls it:**
+
+| Variable | What it holds |
+|----------|--------------|
+| `contributors` | The growing list of contributor dictionaries |
+| `contributor` | One contributor's data, returned from `get_contributor()` |
+
+After the loop finishes, the program does three more things with the contributor data:
+
+- Builds a `names` list by pulling just the names out of `contributors`, then sorts it alphabetically.
+- Loops through `contributors` and adds `"status": "Active"` to every contributor using `.update()`.
+- Makes a copy of the first contributor's data using `.copy()` and stores it in `backup` — just in case the original gets changed later.
 
 ---
 
-### Banner and List Operations
-
-After all contributors are registered, the program prints a welcome banner using the project tuple, then performs several list operations on the contributor data:
-
-These steps demonstrate sorting, dictionary updating with `update()`, and safe copying with `copy()` — all standard tools for managing lists of records.
-
----
-
-## Section 2 — Track and Analyse Issues
+## Part 3 — Collecting Issues
 
 ### `get_issue()`
 
-**What it does:**
-Collects all the information needed to log one issue by asking six questions: the issue ID, title, type, priority, reporter, and status. The free-text fields (title, reporter) go through `get_validated_alpha()`, and the choice fields (type, priority, status) go through `get_validated_input()`. Once all six answers pass, they are packaged into a dictionary and returned. The `while` loop calls this five times to collect five issues.
+This works the same way as `get_contributor()` but for issues. It asks six questions, validates each one, and returns everything as a dictionary. The program calls it inside a loop until exactly 5 issues are logged.
 
-**Why it was created:**
-For the same reason as `get_contributor()` — to avoid repetition and keep the input process consistent and safe. Grouping all six questions into one function also makes the code easier to read and maintain.
+**Variables inside this function:**
 
-**Fields collected:**
+| Variable | What it holds | Where it comes from |
+|----------|--------------|---------------------|
+| `issue_id` | A unique ID for the issue (e.g., ISS-001) | Plain `input()` — no validation |
+| `title` | Short description of the issue | `get_validated_alpha()` |
+| `issue_type` | "Bug" or "Feature" | `get_validated_input()` |
+| `priority` | "Critical", "High", "Medium", or "Low" | `get_validated_input()` |
+| `reporter` | Who reported it | `get_validated_alpha()` |
+| `status` | "Open", "In Progress", or "Resolved" | `get_validated_input()` |
 
-| Field | What it means |
-|-------|--------------|
-| `id` | A unique identifier for the issue (e.g., ISS-001) |
-| `title` | A short description of the problem or request |
-| `type` | Whether it's a Bug (broken) or Feature (new addition) |
-| `priority` | How urgent it is — Critical, High, Medium, or Low |
-| `reporter` | Who flagged this issue |
-| `status` | Whether it's Open, In Progress, or Resolved |
+**Variables in the loop that calls it:**
 
----
-
-### Analysis Operations
-
-After all issues are collected, the program runs analysis automatically — no user input needed.
-
-**What each part does:**
-- **Open count** — loops through all issues and tallies how many are still unresolved
-- **Priority escalation** — directly updates the first issue's priority to show how records can be changed by index
-- **Reporters set** — collects all unique reporter names; sets automatically remove duplicates
-- **Tech stack set** — collects all unique languages from contributors, then demonstrates `add()` and `discard()` to manually adjust the set
-- **Set operations** — `union` combines both sets, `intersection` finds what they share, `difference` finds what's only in reporters
-- **Status groups** — builds a dictionary where each key is a status and its value is a list of issue titles under that status
-- **Top reporter** — manually loops through reporter counts to find who submitted the most, without relying on Python's `max()` shortcut
+| Variable | What it holds |
+|----------|--------------|
+| `issues` | The growing list of issue dictionaries |
+| `issue` | One issue's data, returned from `get_issue()` |
 
 ---
 
-## Section 3 — Save, Read and Report
+### Analysis — What Happens After Issues Are Collected
 
-### Create Project Folder
+Once all 5 issues are in the `issues` list, the program automatically runs some analysis. No input is needed from the user at this point.
 
-**What it does:** Takes the project name from the tuple, converts it to lowercase, and creates a folder with that name (`cmits/`). It checks first whether the folder already exists so it never accidentally overwrites an existing one.
+**Variables created during analysis:**
 
----
+| Variable | What it holds | How it's built |
+|----------|--------------|----------------|
+| `open_count` | Number of issues with status "Open" | A loop that counts matching issues |
+| `reporters` | A set of unique reporter names | A loop that adds each reporter to a `set()` — duplicates are ignored automatically |
+| `tech_stack` | A set of unique languages used by contributors | A loop through `contributors`, plus manually added "Rust" and removed "Cobol" using `.add()` and `.discard()` |
+| `all_items` | Everything in both sets combined | `reporters.union(tech_stack)` |
+| `common` | Names that appear in both sets | `reporters.intersection(tech_stack)` |
+| `diff` | Names only in reporters, not in tech_stack | `reporters.difference(tech_stack)` |
+| `all_priorities` | Set of all priority levels used | A loop through `issues` adding each priority |
+| `priority_count` | Dictionary counting how many issues per priority | A loop that adds to a counter for each priority key |
+| `status_groups` | Dictionary grouping issue titles by their status | A loop that groups titles under each status as a list |
+| `reporter_count` | Dictionary counting issues per reporter | A loop tracking how many issues each person reported |
+| `top_reporter` | Name of the person with the most issues reported | A manual loop comparing counts — no `max()` used |
+| `top_count` | How many issues the top reporter submitted | Tracked alongside `top_reporter` in the same loop |
 
-### Save `project_report.txt`
-
-**What it does:** Opens a new text file and writes the entire project summary into it — project info, all contributors, all issues, and the analysis results. It's wrapped in a `try/except` block so that if something goes wrong during saving (e.g., the disk is full), the program prints a helpful error instead of crashing.
-
----
-
-### Save `issues.csv`
-
-**What it does:** Creates a spreadsheet-compatible `.csv` file. The first row is the header (column names), and each issue becomes one data row beneath it. This file can be opened directly in Excel or Google Sheets without any extra steps.
-
----
-
-### Reading Files Back
-
-**What it does:** After saving, the program reads the report back in three different ways to confirm the file was written correctly. `read()` loads the entire file at once. `readline()` reads one line at a time — here it's called twice to get the first two lines. `readlines()` loads every line into a list, then the program loops through and prints only the lines that mention "Critical" or "High".
-
----
-
-## Bonus Section — Urgent Issue Detection
-
-### Part 1: List Comprehension Filter
-
-**What it does:** Uses a single line called a list comprehension to scan all five issues and collect only the titles of those marked Critical or High. It reads almost like plain English: *"give me the title of every issue where the priority is Critical or High."*
-
-**Why this approach:** It's a compact and efficient way to filter data without writing a full multi-line loop. The result is a clean list of urgent issue titles ready to be used immediately.
+The program also directly changes `issues[0]["priority"]` to "Critical" to simulate an urgent escalation — showing how a specific record can be updated by its index.
 
 ---
 
-### Part 2: Append Urgent Issues to Report
+## Part 4 — Saving and Reading Files
 
-**What it does:** Opens the existing report file in append mode (`"a"`) — this means it adds to the bottom of the file without erasing anything already saved. It writes a new "URGENT ISSUES" section listing every critical or high-priority issue title. Then it reads the last 6 lines of the file and prints them to confirm the addition worked correctly.
+### Creating the Folder
+
+The program creates a folder to store all output files. The folder name comes from the project name in the tuple, converted to lowercase.
+
+| Variable | What it holds |
+|----------|--------------|
+| `folder_name` | `"cmits"` — built from `project[0].lower()` |
+
+It checks if the folder already exists using `os.path.exists()` before creating it, so it never overwrites anything.
 
 ---
 
-## Input Rules Summary
+### Saving `project_report.txt`
 
-| Field | Rule |
-|-------|------|
-| Names, roles, countries, titles, reporters | Letters and spaces only — no numbers or symbols |
-| Commits | Whole numbers only, zero or greater |
-| Issue type | Must be exactly "Bug" or "Feature" |
-| Priority | Must be "Critical", "High", "Medium", or "Low" |
-| Status | Must be "Open", "In Progress", or "Resolved" |
+| Variable | What it holds |
+|----------|--------------|
+| `report_path` | Full file path — built with `os.path.join(folder_name, "project_report.txt")` |
+| `priority_str` | A single string summarizing priority counts — built from `priority_count.items()` |
 
-If any rule is broken, the program asks again. It does not crash.
+The file is opened in write mode (`"w"`) and the entire project summary is written into it: project info, all contributors, all issues, analysis results, and status groups. The whole thing is wrapped in `try/except IOError` so if saving fails for any reason, it shows a clear error instead of crashing.
+
+---
+
+### Saving `issues.csv`
+
+| Variable | What it holds |
+|----------|--------------|
+| `csv_path` | Full file path — built with `os.path.join(folder_name, "issues.csv")` |
+| `writer` | The CSV writer object from Python's built-in `csv` module |
+
+The first row written is the header (`id, title, priority, reporter, status`). Then each issue becomes one row. This file can be opened directly in Excel or Google Sheets.
+
+---
+
+### Reading the Files Back
+
+After saving, the program reads the report file back three different ways to confirm everything saved properly:
+
+| Method | What it does |
+|--------|-------------|
+| `f.read()` | Loads and prints the entire file at once into a variable called `content` |
+| `f.readline()` | Reads one line at a time — called twice to get `first_line` and `second_line` |
+| `f.readlines()` | Loads all lines into a list called `all_lines`, then loops through to find and print only lines that mention "Critical" or "High" |
+
+A variable called `critical_high_count` tracks how many of those flagged lines were found.
+
+All reading is wrapped in `try/except FileNotFoundError` in case the file somehow doesn't exist when the program tries to open it.
+
+---
+
+## Bonus — Urgent Issues
+
+### List Comprehension
+
+```python
+urgent = [issue["title"] for issue in issues if issue["priority"] in ("Critical", "High")]
+```
+
+| Variable | What it holds |
+|----------|--------------|
+| `urgent` | A list of issue titles where priority is Critical or High — built in one line |
+
+This is called a list comprehension. It's a shorter way to write a filter loop. It goes through every issue and picks the title only if the priority matches. The result is a ready-to-use list of urgent issue titles.
+
+---
+
+### Appending to the Report
+
+The program opens the existing report file again, but this time in append mode (`"a"`). This means it adds to the bottom without touching anything already saved. It writes a new "URGENT ISSUES" section with each urgent title listed underneath.
+
+After appending, it reads the last 6 lines of the file using `all_lines[-6:]` and prints them to confirm the section was added correctly.
+
+---
+
+## Input Rules
+
+| Field | What's accepted |
+|-------|----------------|
+| Names, roles, countries, titles, reporters | Letters and spaces only |
+| Commits | Whole numbers, zero or above |
+| Issue type | "Bug" or "Feature" only |
+| Priority | "Critical", "High", "Medium", or "Low" only |
+| Status | "Open", "In Progress", or "Resolved" only |
+
+If the wrong thing is typed, the program asks again. It does not crash.
 
 ---
 
 ## Output Files
 
-| File | Location | Contents |
-|------|----------|----------|
-| `project_report.txt` | `cmits/` folder | Full report: project info, contributors, issues, analysis, urgent flags |
-| `issues.csv` | `cmits/` folder | Spreadsheet of all 5 issues — ready to open in Excel |
+| File | What's in it |
+|------|-------------|
+| `cmits/project_report.txt` | Full report — project info, contributors, issues, analysis, and urgent issues |
+| `cmits/issues.csv` | All 5 issues in spreadsheet format, ready to open in Excel |
